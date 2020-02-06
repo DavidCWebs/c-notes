@@ -13,36 +13,34 @@ The difference between the two declarations is the size of the second dimension 
 
 The first statement (which declares `strs`) includes space for the null terminator, which is required to make the sequence of characters a valid string. The second statement, which declares `chrs`, does not include such space and only stores the characters that were written (with no null terminator).
 
-In the first case, we have an array of strings. The second is an array of character arrays (none of which are null terminated - as such they are not strings).
+The first case is an array of strings. The second is an array of character arrays (none of which are null terminated - as such they are not strings).
 
-This second statement is correct if we intend to use `chrs` only as a multidimensional array of characters, and not use its elements for anything which expects a null terminated string.
+This second statement is fine if you intend to use `chrs` as a multidimensional array of characters, and not use its elements for anything which expects a null terminated string. It is a valid multidimensional array of chars and isn't illegal.
 
-The second statement makes a valid multidimensional array of chars and is not illegal - it will not produce an error or a warning.
+When declaring arrays of strings (multi-dimensional arrays of chars) you cannot omit the size from the second dimension (which is the number of characters in each string). You can only omit only the first dimensions of a multidimensional array.
 
-This behavior is much the same as we discussed previously, for just declaring arrays of characters and initializing them from string literals. However, a significant difference is that in the multidimensional case, we cannot omit the size from the second dimension (which is the number of characters in each string), as C allows us to omit only the first dimensions of a multidimensional array.
-
-If you declare a multidimensional array of chars to hold strings of different lengths, then you must size the second dimension according to the length of the longest string. For example, we might declare the following array:
+If you declare a multidimensional array of chars to hold strings of different lengths, then you must size the second dimension according to the length of the longest string. For example:
 
 ```c
-char words[4][10] = {"A", "cat", "likes", "sleeping."};
+char words[4][7] = {"Out", "of", "cheese", "error."};
 ```
 
-In this example, `words` requires 40 characters of storage despite the fact that the strings used to initialize it only occupy 22 characters. This representation wastes some space. While that waste may not be significant in this example, if we were instead looking at millions of strings with lengths that vary greatly, we might be wasting megabytes.
+In this example, `words` requires 28 bytes (characters) of storage despite the fact that the strings used to initialize it occupy 15 bytes. This representation wastes some space. While that waste may not be significant in this example, if we were instead looking at millions of strings with lengths that vary greatly, we might be wasting megabytes.
 
-We might instead use the [array-of-pointers][1] representation for an array of strings. As we previously discussed, representing multidimensional data with an array of pointers allows us to have items of different lengths, which naturally solves the problem of wasted space. To represent our array of strings in this fashion, we might declare and initialize words as follows:
+We might instead use the [array-of-pointers][1] representation for an array of strings. Representing multidimensional data with an array of pointers allows us to have items of different lengths, which naturally solves the problem of wasted space. To represent our array of strings like this:
 
 ```c
-const char * words[] = {"A", "cat", "likes", "sleeping."};
+const char * words[] = {"Out", "of", "cheese", "error."};
 ```
 
-Observe that here, we declare words as an array of `const char *`s - the elements of the array are pointers to `const chars`, and thus the chars they point to may not be modified.
+Words are declared words as an array of `const char *`s - the elements of the array are pointers to `const chars`, and thus the chars they point to are immutable.
 
 We should include the `const` (and must include it to be const-correct) as we have indicated that words should be initialized to pointers to string literals, which are in read-only memory.
 
-We will note that it is common to end an array of strings with a NULL pointer, such as this:
+__It is common to end an array of strings with a NULL pointer__:
 
 ```c
-const char * words2[] = {"A", "cat", "likes", "sleeping.", NULL};
+const char * words2[] = {"Out", "of", "cheese", "error.", NULL};
 
 // Allows looping over the array as string (i.e. until NULL)
 const char ** ptr = words2;
