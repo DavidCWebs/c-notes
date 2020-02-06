@@ -1,5 +1,4 @@
-Typedef Structs
-===============
+# Typedef Structs
 Typedefs are a useful abstraction. They can save typing and define a particular type in a single place in the  codebase. This makes it easier to change the type.
 
 On the other hand, using typedefs obscures your code somewhat - it's not obvious that you're dealing with a typedef'd struct when reading the codebase.

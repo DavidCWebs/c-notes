@@ -1,5 +1,4 @@
-Reading & Writing to File in C
-==============================
+# Reading & Writing to File in C
 
 File Pointer
 ------------

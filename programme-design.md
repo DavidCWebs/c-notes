@@ -1,5 +1,4 @@
-Programme Design
-================
+# Programme Design
 Based on Coursera Duke University Course: Introduction to Programming in C.
 
 Seven Design Steps

@@ -1,3 +1,2 @@
-C Programming Notes
-===================
+# C Programming Notes
 Notes and some code examples.
