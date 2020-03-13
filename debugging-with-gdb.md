@@ -17,23 +17,27 @@ Commands
 `start`: Begin (or restart) the program’s execution. Stop the program (to accept more commands) as soon as execution enters main.
 
 ### Run
-`run`: This command runs the program (possibly restarting it). It will not stop unless it encounters some other condition that causes it to stop. Abbrieviation: `r`.
+`run` or `r`: This command runs the program (possibly restarting it). It will not stop unless it encounters some other condition that causes it to stop. Abbrieviation: `r`.
 
 ### Step
-`step`: Advance the program one "step" - `step` will go into a function called by the current line. This command can be abbreviated `s`.
+`step` or `s`: Advance the program one "step" - `step` will go into a function called by the current line. This command can be abbreviated `s`.
 
 ### Next
-`next`: Advance the program one line. Unlike step, if the current line of code is a function call, gdb will execute the entire called function without stopping. This command can be abbreviated `n`.
+`next` or `n`: Advance the program one line. Unlike step, if the current line of code is a function call, gdb will execute the entire called function without stopping. This command can be abbreviated `n`.
 
 ### Print
-`print`: Takes an expression as an argument, evaluates that expression, and prints the results. Note that if the expression has side-effects, they will happen, and will affect the state of the program (e.g., if you do print x = 3, it will set x to 3, then print 3). You can put /x after print to get the result printed in hexadecimal format. This command can be abbreviated `p` (or `p/x` to print in hex).
+`print` or `p`: Takes an expression as an argument, evaluates that expression, and prints the results. Note that if the expression has side-effects, they will happen, and will affect the state of the program (e.g., if you do print x = 3, it will set x to 3, then print 3). You can put /x after print to get the result printed in hexadecimal format. This command can be abbreviated `p` (or `p/x` to print in hex).
 
 Every time you print the value of an expression, gdb will remember the value in its own internal variables which are named `$1`, `$2`, etc. Gdb shows the internal variable when it prints the value—e.g., `$1 = 42`).
 
 You can use these $ variables in other expressions if you want to make use of these values later.
 
 ### Print from Array
-gdb also has a feature to let you print multiple elements from an array. If you put `@number` after an lvalue, gdb will print number values starting at the location you named. This feature is most useful with arrays - for example, if `a` is an array, you can do `p a[0]@5` to print the first 5 elements of `a`.
+You can print multiple elements from an array - put `@number` after an lvalue name and gdb prints `number` values starting at that index.
+
+If `A` is an array, `p A[0]@5` will print the first 5 elements.
+
+Print all elements in array `A` of length `len`: `p *A@len`
 
 ### Display
 `display`: The display command takes an expression as an argument, and displays its value every time gdb stops and displays a prompt. For example `display i` will evaluate and print `i` before each (gdb) prompt. You can abbreviate this command `disp`.
