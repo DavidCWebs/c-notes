@@ -111,3 +111,9 @@ Programme calls `abort()` or fails an assert. As with segfaults, if your code is
 
 ### SIGINT
 Programme is interrupted - e.g., by the user pressing Control-c. If the programme is getting stuck in an infinite loop, you can run it in gdb, and then after a while, press Control-c. You can then see where the program is, and what it is doing. You are not guaranteed to be in the right place (you may interrupt the program before it gets into the infinite loop), but if you wait sufficiently long, you will typically end up where you want. You can then see what is happening, and why you are not getting the behaviour you want.
+
+References
+----------
+* [Debugging with GDB][1]
+
+[1]: https://www.sourceware.org/gdb/onlinedocs/gdb/
