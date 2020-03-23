@@ -1,6 +1,9 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
-#define N 410
+#define N 10
+static size_t count = 0;
 
 void iterativeFibonacci(int *resArray, int n)
 {
@@ -11,6 +14,7 @@ void iterativeFibonacci(int *resArray, int n)
 
 int recursiveFibonacci(int *resArray, int n)
 {
+	count++;
 	if (resArray[n] == -1) {
 		resArray[n] = recursiveFibonacci(resArray, n - 1) + recursiveFibonacci(resArray, n - 2);
 	}
@@ -24,19 +28,21 @@ void printArray(int *arr, int n) {
 	puts(" ]\n");
 }
 
-
-int main()
+int main(int argc, char **argv)
 {
-	int r[N];
-	iterativeFibonacci(r, N);
-	printArray(r, N);
+	char *endptr = NULL;
+	int n = argc == 2 ? strtol(argv[1], &endptr, 10) : N;
+
+	int r[n];
+	iterativeFibonacci(r, n);
+	printArray(r, n);
 	
-	int r2[N] = { [0 ... N-1] = -1 };
-	
+	int r2[n];
+	memset(r2, -1, sizeof(*r2) * n);
 	r2[0] = 0;
 	r2[1] = 1;
-	printArray(r2, N);
-	recursiveFibonacci(r2, N - 1);
-	printArray(r2, N);
+	recursiveFibonacci(r2, n - 1);
+	printArray(r2, n);
+	printf("recursiveFibonacci() called %lu times.\n", count);
 	return 0;
 }
