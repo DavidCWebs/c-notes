@@ -39,6 +39,7 @@ Computing the 4th number in the Fibonacci sequence would involve calling:
 * `fib(1)` three times
 * `fib(0)` twice
 
+```
 fib(4)
 |     \
 |      \
@@ -53,7 +54,7 @@ fib(2) fib(1) fib(1) fib(0)
 |     \
 |      \
 fib(1)	fib(0)
-
+```
 
 For example, a naive recursive implementation in C looks like this:
 ```c
