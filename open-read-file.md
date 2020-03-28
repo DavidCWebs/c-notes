@@ -171,6 +171,63 @@ The third argument specifies how many such items should be read from the stream,
 
 The `fread` function returns how many items were successfully read. As with `fgets`, you should employ `feof` and/or `ferror` to obtain more information if `fread` returns fewer items than you requested. 
 
+Build String From File
+----------------------
+```c
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+
+int stringFromFile(char *filename, char **buffer)
+{
+	int errnum;
+	// Open the file by creating a file pointer.
+	FILE *fp = fopen(filename, "r");
+	if (!fp) {
+		// On failure, fopen returns NULL and sets errno.
+		// call loggerExit here
+		errnum = errno;
+		fprintf(stderr, "Error opening file %s: %s\n", filename, strerror(errnum));
+		return 1;
+	}
+	if (fseek(fp, 0L, SEEK_END) != 0) {
+		fprintf(stderr, "Can't get file size\n");
+		return 1;
+	}
+	long bufferSize = ftell(fp);
+	if (fseek(fp, 0L, SEEK_SET) != 0) {
+		fprintf(stderr, "Can't reset file to beginning.\n");
+		return 1;
+	}
+
+	printf("size of %s is %lu\n", filename, bufferSize);
+
+	// Using calloc rather than malloc means we don't have to 
+	// add a terminating NUL character, since calloc fills the
+	// buffer with '\0' chars.
+	*buffer = calloc(bufferSize + 1, sizeof(**buffer));
+	if (*buffer == NULL) {
+		fprintf(stderr, "Error allocating memory.\n");
+		return 1;
+	}
+
+	fread(*buffer, sizeof(**buffer), bufferSize, fp);
+	fclose(fp);	
+	return 0;
+}
+
+int main()
+{
+	char *s = NULL;
+	if (!stringFromFile("test", &s)) {
+		printf("s is:\n%s", s);
+	}
+	free(s);
+	return 0;
+}
+```
+
 Resources
 ---------
 * [Make an array of strings from a file in C][1] - using dynamic allocation

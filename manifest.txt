@@ -7,8 +7,10 @@ compiler-errors.md
 debugging.md
 debugging-with-gdb.md
 function-pointers.md
+initialise-array.md
 initialise-multidimensional-array.md
 linking.md
+make.md
 malloc.md
 manpages.md
 mutable-strings.md
