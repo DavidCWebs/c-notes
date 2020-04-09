@@ -13,6 +13,7 @@ linking.md
 make.md
 malloc.md
 manpages.md
+multiple-indirection-arithmetic.md
 mutable-strings.md
 null-pointer.md
 open-read-file.md
@@ -21,6 +22,7 @@ pass-array-as-parameter.md
 pass-array-of-strings-to-function.md
 pointer-abuse.md
 pointer-arithmetic.md
+pointer-arithmetic-multiple-indirection.md
 pointers-to-structs.md
 preprocessing.md
 programme-design.md

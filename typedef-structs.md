@@ -1,11 +1,12 @@
 # Typedef Structs
-Typedefs are a useful abstraction. They can save typing and define a particular type in a single place in the  codebase. This makes it easier to change the type.
+Type definitions can help to make a programme more understandable. They often save typing and allow you to define a particular type in a single place in the codebase, making it easier to make changes.
 
-On the other hand, using typedefs obscures your code somewhat - it's not obvious that you're dealing with a typedef'd struct when reading the codebase.
+On the other hand, using typedefs can obscure your code - it may not be obvious that you're dealing with a `typedef` defined struct when reading the codebase.
 
 
 Define tag only
 ---------------
+Define a struct, without making a type definition:
 
 ```c
 struct node_tag {
@@ -35,7 +36,7 @@ typedef struct node_tag Node;
 // Usage:
 int main()
 {
-	// In this case, the struct keyword is unnecessary
+	// In this case, we can use our defined type without the struct keyword
 	Node first;
 	first.id = 1;
 	...
