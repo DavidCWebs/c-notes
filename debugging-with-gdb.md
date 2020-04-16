@@ -1,5 +1,5 @@
 # Debugging With GDB
-Using a debugger allows you to investigate the state of your programme. If you're working in C or C++, familiarity with a debugger is more or less essential.
+Using a debugger allows you to investigate the state of your programme. If you're working in C or C++, familiarity with a debugger like GDB is more or less essential.
 
 GDB is the GNU debugger - it is a tool that allows you to see what is going on "inside" your target programme while it is executing - or what a programme was doing at the moment it crashed.
 
@@ -11,7 +11,7 @@ The `-g` option instructs `gcc` to compile with debugging symbols. Use `-ggdb3` 
 
 Run GDB
 -------
-Once the programme has been compiled with debugging symbols, run `gdb` from the command line, providing the name of your executable as an argument: `gdb ./my-prog`.
+Once the programme has been compiled with debugging symbols, run `gdb` from the command line, providing the name of your executable as the sole argument: `gdb ./my-prog`. If your programme requires arguments, you don't enter them at this stage.
 
 Commands: Moving Through the Programme
 --------------------------------------
@@ -35,6 +35,8 @@ To pass command line arguments, you can either add them after the `start` or `ru
 
 Examine Variables
 -----------------
+The `print` and `display` commands allow you to see what value an expression evaluates to.
+
 ### Print
 `print` or `p`: Evaluates an expression and prints the result. Print a variable x: `p x` to show the value of `x` at the current position in the programme.
 
@@ -70,10 +72,9 @@ Print all elements in array `A` of length `len`: `p *A@len`
 
 Investigating the State of Your Program
 ---------------------------------------
-. The `print` and `display` commands allow you to see what value an expression evaluates to.
 
 ### Inspect Stack Frames
-Gdb allows you to inspect the current set of stack frames and move up and down within them. The `backtrace` (`bt`) command lists all of the stack frames with the current one on top, and main on the bottom - showing the function calls that lead up to the current position. The `backtrace` also shows the line where each call was made.
+GDB allows you to inspect the current set of stack frames and move up and down within them. The `backtrace` (`bt`) command lists all of the stack frames with the current one on top, and main on the bottom - showing the function calls that lead up to the current position. The `backtrace` also shows the line where each call was made.
 
 Gdb uses the variables in the current scope when executing the `print` command. To inspect variables in other frames further up the stack, select different frames with the `up` and `down` command, which move scope up and down the stack.
 
@@ -85,15 +86,20 @@ The `info` command provides information about various aspects of the programme. 
 * `info types` describes the types that are in the current program
 * `info b` information about breakpoints
 
-There are a variety of info commands, but most of them are for more advanced uses - use `help info` within GDB for more information.
+There more `info` options - use `help info` for more information.
 
 Controlling Execution
 ---------------------
-The `next` (`n`) and `step` (`s`) commands advance the state of the program line-by-line. This may not be optimal, especially when debugging a large programme.
+### Kill GDB
+To kill GDB and restart a fresh debugging session without restarting GDB: `ki` (`kill`) and enter 'y'.
 
+### Next and Step
+Start the programme with `start`, then step through execution line by line.
+
+The `next` (`n`) and `step` (`s`) commands advance the state of the program line-by-line.
+
+### Breakpoints
 A breakpoint instructs GDB to stop execution whenever the program reaches a particular line.
-
-### Example Breakpoints
 
 ```gdb
 # Breakpoint inside function main() - break inserted just after opening curly brace:
@@ -113,14 +119,14 @@ The programme runs (or continues if already started) until the breakpoint. When 
 
 You can enter `c` to continue from the breakpoint, which jumps to the next breakpoint. You can also use `n` or `s` to step through the programme from this point.
 
-By default, breakpoints are unconditional. Gdb will stop the program and give you control anytime it reaches the appropriate line.
+By default, breakpoints are unconditional. GDB will stop the program and give you control anytime it reaches the appropriate line.
 
 ### Conditional Breakpoint
 Conditional breakpoints are very useful for looking inside loops and recursive reoutines.
 
 Break on line 7 if `i` is as specified:
 ```
-(gdb) break 7 if i==250000
+(gdb) break 7 if i==2
 ```
 ### Breakpoint Info
 
@@ -169,13 +175,13 @@ Use the `frame` command to inspect a specified frame.
 
 Watchpoints
 -----------
-A watchpoint stops execution when the value of a particular expression changes. For example: `watch i`, which will cause GDB to stop whenever the value of `i` changes. When GDB stops in response to a watchpoint, it will print the old value of the expression and the new value.
+A watchpoint stops execution when the value of an expression changes. The simplest use is to watch the value of a single variable - the command `watch i` causes a break whenever the value of `i` changes, printing the old & new values.
 
-Watchpoints can be a particularly powerful tool when you have pointer-related problems, and values of variables are changing through aliases.
+Watchpoints can be useful when debugging pointer-related issues.
 
-However, sometimes, the alias we have when we setup the watchpoint may go out of scope before the change we are interested in happens. For example, we may want to watch `*p`, but `p` is a local variable, whose scope ends before the value changes.
+If the alias (variable) associated with the watchpoint goes out of scope before changing, you can find the relevant GDB variable (e.g. `$1`) by using `print` and this (e.g. `watch $1`).
 
-Whenever we face such a problem, we can print `p`, which will give us the pointer in a GDB variable (e.g., `$6`) and then we can use that `$`-variable - which never goes out of scope - to set a watchpoint: watch `*$6`.
+[More info on watchpoints][4], or enter `info gdb` and search for `watchpoint`.
 
 Signals
 -------
@@ -184,21 +190,21 @@ When a programme receives a signal, GDB will stop the programme and give you con
 ### SIGSEGV
 Indicates a segmentation fault. The programme has attempted to access a restricted area of memory.
 
-Execution stops, and the programme will be on the line where the segfault happened. You can inspect the state of the program (printing out variables) to see what went wrong.
+Execution stops the programme on the line where the segfault happened. You can inspect the state of the program (printing out variables) to see what went wrong.
 
 ### SIGABRT
-Programme calls `abort()` or fails an assert. GDB leaves you in control of the programme at the point where assert caused the abort, and (after going up a few frames back into your own code), see exactly what was going on when the problem happened.
+Programme calls `abort()` or fails an assert. GDB leaves you in control of the programme at the point where assert caused the abort. You may need to move through frames to get back into your own code to debug the fault.
 
 ### SIGINT
-Programme is interrupted - e.g., by the user pressing Control-c. If the programme is getting stuck in an infinite loop, you can run it in gdb, and then after a while, press Control-c. 
-
-Once execution has halted, you can use `bt` to see a backtrace. To examine a particular frame, use the `frame` command, e.g. `(gdb) f 6` to inspect frame 6.
+Programme is interrupted - e.g. by the user pressing Control-c. If the programme is getting stuck in an infinite loop, run it in GDB and press Control-c. Once execution has halted use `bt` to view a backtrace. To examine a particular frame, use the `frame` command, e.g. `(gdb) f 4` to inspect frame 4.
 
 References
 ----------
 * [Debugging with GDB][1] - online book
 * [GDB Tutorial][2] by Faye Williams - loads of useful GDB stuff on the same site
+* [Watchpoints][4]
 
 [1]: https://sourceware.org/gdb/onlinedocs/gdb/
 [2]: https://www.fayewilliams.com/2011/02/01/command-line-gdb-tutorial-and-walkthrough-part-1/
 [3]: https://sourceware.org/gdb/onlinedocs/gdb/Output-Formats.html
+[4]: https://sourceware.org/gdb/onlinedocs/gdb/Set-Watchpoints.html
