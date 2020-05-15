@@ -51,7 +51,7 @@ i     x     y     z     val
 To access `array[2][1][1]`, `flatArray[f(2, 1, 1)]` is used. This is computed to retrieve `flatArray[22]` - in this case the value C11 is retrieved.
 
 ## Code
-```
+```c
 #include <stdio.h>
 #define DIMENSION_1 3
 #define DIMENSION_2 3
